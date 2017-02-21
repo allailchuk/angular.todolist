@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Angular ToDo List</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+
+</head>
+<body>
+
+<div ng-app="angular-todo-list" ng-init="loadItems()">
+    <div class="header">
+        <div>My Angular TodoList</div>
+        <input type="text" ng-model="newItem">
+        <button ng-click="createItem()">Add</button>
+    </div>
+
+    <ul>
+        <li ng-repeat="item in items">
+            <button ng-click="item.checked = !item.checked"> {{ item.checked ? 'Checked' : 'Unchecked' }}</button>
+            {{item.name}}
+            <button class="delete" ng-click="deleteItem(item)">X</button>
+        </li>
+    </ul>
+</div>
+
+<script>
+    angular.module('angular-todo-list', []).run(function ($rootScope, $http) {
+
+        $rootScope.loadItems = function () {
+            $http.get('/restapi/todos').then(function (rsp) {
+                $rootScope.items = rsp.data.data;
+            })
+        };
+
+        $rootScope.deleteItem = function (item) {
+            $http.delete('/restapi/todos/' + item.id).then(function () {
+                $rootScope.loadItems();
+            })
+        };
+
+        $rootScope.createItem = function () {
+            var item = {
+                name: $rootScope.newItem
+            };
+            $http.post('/restapi/todos', item).then(function () {
+                $rootScope.loadItems();
+                $rootScope.newItem = "";
+            });
+        }
+    })
+
+</script>
+
+
+</body>
+</html>
