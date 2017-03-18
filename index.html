@@ -27,19 +27,16 @@
 
 <script>
     angular.module('angular-todo-list', []).run(function ($rootScope, $http) {
-
         $rootScope.loadItems = function () {
             $http.get('/restapi/todos').then(function (rsp) {
                 $rootScope.items = rsp.data.data;
             })
         };
-
         $rootScope.deleteItem = function (item) {
             $http.delete('/restapi/todos/' + item.id).then(function () {
                 $rootScope.loadItems();
             })
         };
-
         $rootScope.createItem = function () {
             var item = {
                 name: $rootScope.newItem
@@ -50,7 +47,6 @@
             });
         }
     })
-
 </script>
 
 
